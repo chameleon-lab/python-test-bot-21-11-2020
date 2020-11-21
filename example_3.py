@@ -16,14 +16,28 @@ def start(message):
 
 @bot.message_handler(commands=['help'])
 def start(message):
-    res = '/courses \n' \
-          '/schedule \n'
+    res = '/courses - список курсов \n' \
+          '/schedule - расписание курсов\n' \
+          '/planning - список курсовв котрые ведется набор,'
     bot.reply_to(message, res)
 
 
-@bot.message_handler(func=lambda message: True, content_types=['text'])
+@bot.message_handler(commands=['courses'])
 def echo_message(message):
-    bot.reply_to(message, message.text)
+    res = 'Ухты'
+    bot.reply_to(message, res)
+
+
+@bot.message_handler(commands=['schedule'])
+def echo_message(message):
+    res = 'Ухты пухты'
+    bot.reply_to(message, res)
+
+
+@bot.message_handler(commands=['planning'])
+def echo_message(message):
+    res = 'Ура'
+    bot.reply_to(message, res)
 
 
 @server.route('/' + TOKEN, methods=['POST'])
