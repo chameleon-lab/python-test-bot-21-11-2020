@@ -34,7 +34,7 @@ def echo_message(message):
         keyboard.add(url_button)
     bot.send_message(message.chat.id, "Привет! Выбери курс", reply_markup=keyboard)
 
-
+@bot.message_handler(commands=['planning'])
 def echo_message(message):
     with open('planning.json', encoding="utf8") as json_file:
         data = json.load(json_file)
