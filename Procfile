@@ -1,1 +1,1 @@
-web: python3 example_2.py
+web: python3 example_3.py
