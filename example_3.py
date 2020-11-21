@@ -1,12 +1,14 @@
 import os
 from flask import Flask, request
 import telebot
+import json
 
 
 TOKEN = '1423141786:AAFGYwvJG9LaJRQD-uiVbd1-iwRqmLKw0eI'
 bot = telebot.TeleBot(TOKEN)
 
 server = Flask(__name__)
+
 
 
 @bot.message_handler(commands=['start'])
@@ -17,35 +19,31 @@ def start(message):
 @bot.message_handler(commands=['help'])
 def start(message):
     res = '/courses - список курсов \n' \
-          '/schedule - расписание курсов\n' \
-          '/planning - список курсовв котрые ведется набор,'
+          '/planning - расписание запуска курсов,'
     bot.reply_to(message, res)
 
 
 @bot.message_handler(commands=['courses'])
 def echo_message(message):
-    keyboard = telebot.types.InlineKeyboardMarkup()
-
     with open('courses.txt') as file:
         courses = [item.split(',') for item in file]
+    keyboard = telebot.types.InlineKeyboardMarkup(row_width=1)
 
     for text, url in courses:
-        keyboard.row(telebot.types.InlineKeyboardButton(text=text, url=url))
+        url_button = telebot.types.InlineKeyboardButton(text=text, url=url.strip(' \n'))
+        keyboard.add(url_button)
+    bot.send_message(message.chat.id, "Привет! Выбери курс", reply_markup=keyboard)
 
-    bot.send_message(message.chat.id, 'Выберите курс:', reply_markup=keyboard)
 
-
-
-@bot.message_handler(commands=['schedule'])
 def echo_message(message):
-    res = 'Ухты пухты'
-    bot.reply_to(message, res)
-
-
-@bot.message_handler(commands=['planning'])
-def echo_message(message):
-    res = 'Ура'
-    bot.reply_to(message, res)
+    with open('planning.json', encoding="utf8") as json_file:
+        data = json.load(json_file)
+    res = ''
+    for item in data['courses']:
+        res += f"<b>{item['course']}</b>\n" \
+                   f"<i>Online:</i> <code>{item['schedule']['online']}</code>\n" \
+                   f"<i>Offline:</i> <code>{item['schedule']['offline']}</code>\n"
+    bot.send_message(message.from_user.id, text=res, parse_mode='HTML')
 
 
 @server.route('/' + TOKEN, methods=['POST'])
