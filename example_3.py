@@ -4,16 +4,19 @@ import telebot
 import json
 
 
-TOKEN = '1423141786:AAFGYwvJG9LaJRQD-uiVbd1-iwRqmLKw0eI'
+TOKEN = TOKEN
 bot = telebot.TeleBot(TOKEN)
 
 server = Flask(__name__)
 
-
+with open('courses.txt') as file:
+    courses = [item.split(',') for item in file]
+with open('planning.json', encoding="utf8") as json_file:
+    data = json.load(json_file)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+    bot.reply_to(message, 'PROG.Kyiv.UA')
 
 
 @bot.message_handler(commands=['help'])
@@ -25,8 +28,7 @@ def start(message):
 
 @bot.message_handler(commands=['courses'])
 def echo_message(message):
-    with open('courses.txt') as file:
-        courses = [item.split(',') for item in file]
+
     keyboard = telebot.types.InlineKeyboardMarkup(row_width=1)
 
     for text, url in courses:
@@ -36,8 +38,7 @@ def echo_message(message):
 
 @bot.message_handler(commands=['planning'])
 def echo_message(message):
-    with open('planning.json', encoding="utf8") as json_file:
-        data = json.load(json_file)
+
     res = ''
     for item in data['courses']:
         res += f"<b>{item['course']}</b>\n" \
