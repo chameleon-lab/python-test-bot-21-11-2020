@@ -24,8 +24,16 @@ def start(message):
 
 @bot.message_handler(commands=['courses'])
 def echo_message(message):
-    res = 'Ухты'
-    bot.reply_to(message, res)
+    keyboard = telebot.types.InlineKeyboardMarkup()
+
+    with open('courses.txt') as file:
+        courses = [item.split(',') for item in file]
+
+    for text, url in courses:
+        keyboard.row(telebot.types.InlineKeyboardButton(text=text, url=url))
+
+    bot.send_message(message.chat.id, 'Выберите курс:', reply_markup=keyboard)
+
 
 
 @bot.message_handler(commands=['schedule'])
